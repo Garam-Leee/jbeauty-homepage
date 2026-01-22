@@ -201,8 +201,11 @@ const TextArea = styled.div`
     margin: 0;
     .amp { font-weight: 300; font-size: 3rem; opacity: 0.6; }
   }
+  @media (max-width: 1500px) {
+    .catch { font-size: 3rem; }
+  }
   @media (max-width: 768px) {
-    .catch { font-size: 3.2rem; }
+    .catch { font-size: 2.5rem; }
   }
 `;
 
