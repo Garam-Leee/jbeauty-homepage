@@ -18,8 +18,10 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     eyebrow: "会社について",
-    title: "Company",
-    desc: `私たちは、香りと雑貨を通じて、日常に笑顔と癒しをお届けします。\n世界中から選び抜いた高品質な商品を取り揃え、\nロングセラーから最新のトレンド商品까지 폭넓게 제안.\n暮らし에寄り添う、좀 더 특별한 체험을.\n 고객님의 매일을 더욱 기분 좋고 풍요롭게.`,
+    title: "COMPANY",
+    desc: `私たちは、香りと雑貨を通じて、日常に笑顔と癒しをお届けします。\n世界中から選び抜いた高品質な商品を取り揃え、\nロングセラーから最新のトレンド商品まで幅広くご提案。\n暮らしに寄り添う、ちょっと特別な体験を。\nお客様の毎日を、もっと心地よく、もっと豊かに。
+
+`,
     href: "/company",
     images: ["/assets/images/index_company.jpg"],
     reverse: false,
@@ -27,7 +29,7 @@ const FEATURES: Feature[] = [
   {
     eyebrow: "ブランド",
     title: "Brand",
-    desc: `향기와 일상에 어우러지는 감성과 품질이 뛰어난 브랜드를 엄선.\n일상에 자연스럽게 스며드는 신뢰와 트렌드를 겸비한 아이템을 소개합니다.`,
+    desc: `香りと暮らしに寄り添う、感性と品質に優れたブランドを厳選。\n日常を豊かに彩る、信頼とトレンドを兼ね備えたアイテムをご紹介します。`,
     href: "/brand",
     images: [
       "/assets/images/ohscent-product.jpg",
@@ -137,7 +139,7 @@ const Wrap = styled.section`
 `;
 
 const Inner = styled.div`
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -200,10 +202,7 @@ const AccordionItem = styled(motion.div)`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    position: absolute;  
   }
 `;
 

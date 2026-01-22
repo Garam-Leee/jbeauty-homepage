@@ -2,43 +2,63 @@
 
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { motion, useScroll } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Header({ variant = "sub" }: { variant?: "home" | "sub" }) {
   const [open, setOpen] = useState(false);
+  const { scrollY } = useScroll();
+  
+  // 스크롤이 50px 이상 내려가면 배경색과 쉐도우 변화
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = scrollY.on("change", (latest) => {
+      setIsScrolled(latest > 50);
+    });
+    return () => unsubscribe();
+  }, [scrollY]);
 
   useEffect(() => {
     document.body.classList.toggle("no-scroll", open);
     return () => document.body.classList.remove("no-scroll");
   }, [open]);
 
-  // home일 때는 배경이 이미지라 로고 화이트 버전 사용
-  const logoSrc =
-    variant === "home"
-      ? "/assets/images/j-beauty_logo_w.svg"
-      : "/assets/images/j-beauty_logo.svg";
+  // 로고 색상 결정 로직 (홈이면서 스크롤 전일 때만 화이트 로고)
+  const isWhiteLogo = variant === "home" && !isScrolled;
+  const logoSrc = isWhiteLogo
+    ? "/assets/images/j-beauty_logo_w.svg"
+    : "/assets/images/j-beauty_logo.svg";
 
   return (
-    <HeaderWrapper $variant={variant}>
-      <HeaderInner $variant={variant}>
+    <HeaderWrapper 
+      $variant={variant} 
+      $scrolled={isScrolled}
+      initial={false}
+      animate={{
+        backgroundColor: isScrolled ? "rgba(255, 255, 255, 0.85)" : variant === "home" ? "rgba(255, 255, 255, 0)" : "rgba(255, 255, 255, 1)",
+        backdropFilter: isScrolled ? "blur(10px)" : "blur(0px)",
+        boxShadow: isScrolled ? "0 4px 30px rgba(0, 0, 0, 0.05)" : "0 0 0 rgba(0, 0, 0, 0)",
+        paddingTop: isScrolled ? "16px" : "18px",
+        paddingBottom: isScrolled ? "16px" : "18px",
+      }}
+      transition={{ duration: 0.3 }}
+    >
+      <HeaderInner>
         <Logo>
           <Link href="/" aria-label="Go to home">
             <LogoImg
               src={logoSrc}
               alt="j-beauty"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-              }}
+              $isWhite={isWhiteLogo}
             />
           </Link>
         </Logo>
 
         <Hamburger
           $open={open}
-          id="hamburger-btn"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
+          $isWhite={isWhiteLogo}
           onClick={() => setOpen((v) => !v)}
         >
           <span />
@@ -46,24 +66,19 @@ export default function Header({ variant = "sub" }: { variant?: "home" | "sub" }
           <span />
         </Hamburger>
 
-        <Nav $open={open} id="nav-menu" aria-label="Primary">
+        <Nav $open={open}>
           <MobileMenuLogo className="sp_on">
             <Link href="/" onClick={() => setOpen(false)}>
-              <MobileLogoImg
-                src="/assets/images/j-beauty_logo.svg"
-                alt="j-beauty"
-                onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")}
-              />
+              <MobileLogoImg src="/assets/images/j-beauty_logo.svg" alt="j-beauty" />
             </Link>
           </MobileMenuLogo>
 
-          <NavList>
-            <NavItem><NavLink href="/" onClick={() => setOpen(false)}>TOP</NavLink></NavItem>
-            <NavItem><NavLink href="/company" onClick={() => setOpen(false)}>COMPANY</NavLink></NavItem>
-            <NavItem><NavLink href="/brand" onClick={() => setOpen(false)}>BRAND</NavLink></NavItem>
-            <NavItem><NavLink href="/news" onClick={() => setOpen(false)}>NEWS</NavLink></NavItem>
+          <NavList> 
+            <NavItem><NavLink href="/company" $isWhite={isWhiteLogo} onClick={() => setOpen(false)}>COMPANY</NavLink></NavItem>
+            <NavItem><NavLink href="/brand" $isWhite={isWhiteLogo} onClick={() => setOpen(false)}>BRAND</NavLink></NavItem>
+            <NavItem><NavLink href="/news" $isWhite={isWhiteLogo} onClick={() => setOpen(false)}>NEWS</NavLink></NavItem>
             <NavItem>
-              <ContactBtn href="/contact" onClick={() => setOpen(false)}>
+              <ContactBtn href="/contact" $scrolled={isScrolled} onClick={() => setOpen(false)}>
                 CONTACT
               </ContactBtn>
             </NavItem>
@@ -78,248 +93,163 @@ export default function Header({ variant = "sub" }: { variant?: "home" | "sub" }
    Styled Components
 ========================= */
 
-const HeaderWrapper = styled.header<{ $variant: "home" | "sub" }>`
+const HeaderWrapper = styled(motion.header)<{ $variant: "home" | "sub"; $scrolled: boolean }>`
   width: 100%;
   position: fixed;
+  top: 0;
+  left: 0;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  padding: 0 5.5%;
   
-  ${({ $variant }) => $variant === "home" ? css`
-    /* top-header 스타일 */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  ` : css`
-    /* sub-header 스타일 */
-    background: #fff;
+  /* sub 페이지 기본 보더 (스크롤 시 사라짐) */
+  ${({ $variant, $scrolled }) => $variant === "sub" && !$scrolled && css`
     border-bottom: 1px solid #eee;
-    padding: 20px 4%;
-    
-    @media (max-width: 768px) {
-      padding: 20px 4% 17px;
-    }
   `}
 `;
 
-const HeaderInner = styled.div<{ $variant: "home" | "sub" }>`
-  ${({ $variant }) => $variant === "sub" && css`
-    max-width: 100%;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-    @media (max-width: 768px) {
-      gap: 12px;
-    }
-  `}
+const HeaderInner = styled.div`
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const Logo = styled.div`
-  font-size: 1.8rem;
-  font-weight: bold;
-  line-height: 0.8;
-  color: #1a1a1a;
-  text-align: left;
-  
-  span {
-    font-size: 12px;
-    font-weight: 300;
-    color: #666;
-  }
+  line-height: 0;
+  z-index: 1001;
 `;
 
-const LogoImg = styled.img`
-  width: 55%;
-  padding-top: 4px;
+const LogoImg = styled.img<{ $isWhite: boolean }>`
+  width: 140px;
+  height: auto;
+  transition: filter 0.3s ease;
   
   @media (max-width: 768px) {
-    width: 50%;
+    width: 110px;
   }
 `;
 
-const MobileLogoImg = styled.img`
-  width: 65%;
-`;
-
-const Hamburger = styled.button<{ $open: boolean }>`
+const Hamburger = styled.button<{ $open: boolean; $isWhite: boolean }>`
   display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 25px;
-  height: 20px;
+  z-index: 1001;
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 1001;
-  
-  span {
-    display: block;
-    height: 3px;
-    background: #333;
-    border-radius: 2px;
-  }
   
   @media (max-width: 768px) {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     gap: 6px;
-    width: 30px;
-    height: 30px;
-    position: relative;
     
     span {
+      display: block;
+      width: 28px;
       height: 2px;
-      transition: all 0.4s ease;
+      background: ${({ $isWhite, $open }) => $open ? "#333" : $isWhite ? "#fff" : "#333"};
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 2px;
     }
-    
-    span:nth-of-type(1) { 
-      width: 100%; 
-      ${({ $open }) => $open && css`
-        transform: rotate(45deg) translate(5px, 5px);
-      `}
-    }
-    
-    span:nth-of-type(2) { 
-      width: 70%; 
-      ${({ $open }) => $open && css`
-        opacity: 0;
-      `}
-    }
-    
-    span:nth-of-type(3) { 
-      width: 40%; 
-      ${({ $open }) => $open && css`
-        transform: rotate(-45deg) translate(6px, -6px);
-        width: 100%;
-      `}
-    }
+
+    ${({ $open }) => $open && css`
+      span:nth-of-type(1) { transform: rotate(45deg) translate(6px, 6px); }
+      span:nth-of-type(2) { opacity: 0; }
+      span:nth-of-type(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    `}
   }
 `;
 
 const Nav = styled.nav<{ $open: boolean }>`
+  display: flex;
+  align-items: center;
+
   @media (max-width: 768px) {
     position: fixed;
     top: 0;
     right: ${({ $open }) => $open ? "0" : "-100%"};
     width: 100%;
     height: 100vh;
-    background: white;
-    display: flex;
+    background: #fff;
     flex-direction: column;
-    justify-content: ${({ $open }) => $open ? "flex-start" : "center"};
-    align-items: center;
-    gap: 30px;
-    transition: right 0.5s ease;
-    z-index: 1000;
-    padding-top: ${({ $open }) => $open ? "7rem" : "0"};
-    text-align: center;
-    
-    ${({ $open }) => $open && css`
-      background-image: url("/assets/images/bg-gradation.jpg");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-color: rgba(255, 255, 255, 0.85);
-    `}
+    justify-content: center;
+    transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
   }
 `;
 
 const NavList = styled.ul`
   display: flex;
-  gap: 4.5em;
+  align-items: center;
+  gap: 60px;
   list-style: none;
   
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 24px;
+    gap: 30px;
   }
 `;
 
 const NavItem = styled.li`
-  @media (max-width: 768px) {
-    opacity: 0;
-    transform: translateY(20px);
-    
-    ${Nav}[aria-label="Primary"] & {
-      animation: fadeUp 0.5s ease forwards;
-    }
-    
-    &:nth-of-type(1) { animation-delay: 0.1s; }
-    &:nth-of-type(2) { animation-delay: 0.2s; }
-    &:nth-of-type(3) { animation-delay: 0.3s; }
-    &:nth-of-type(4) { animation-delay: 0.4s; }
-    &:nth-of-type(5) { 
-      animation-delay: 0.5s;
-      margin-top: 10px;
-    }
-    
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  }
-`;
-
-const NavLink = styled(Link)`
-  text-decoration: none;
-  font-weight: 500;
   position: relative;
-  
-  @media (max-width: 768px) {
-    font-size: 1.15rem;
-    color: #333 !important;
-    transition: color 0.3s;
-    
-    &:hover {
-      color: #4BB3C4;
-    }
-  }
 `;
 
-const ContactBtn = styled(Link)`
-  border: 1px solid #4BB3C4;
-  padding: 10px 30px 8px;
-  border-radius: 30px;
-  transition: all 0.3s;
-  color: #4BB3C4;
+const NavLink = styled(Link, {
+  shouldForwardProp: (prop) => prop !== '$isWhite',
+})<{ $isWhite: boolean }>`
   text-decoration: none;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: ${({ $isWhite }) => $isWhite ? "#fff" : "#1a1a1a"};
+  transition: color 0.3s ease;
   
   &:hover {
-    background-color: #4bb4c4c2;
+    color: #4BB3C4;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+    color: #1a1a1a !important;
+  }
+`;
+
+const ContactBtn = styled(Link, {
+  shouldForwardProp: (prop) => prop !== '$scrolled',
+})<{ $scrolled: boolean }>`
+  display: inline-block;
+  padding: 12px 32px;
+  border-radius: 50px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #4BB3C4;
+    transform: translateY(-1px);
     color: #fff;
   }
-  
+
   @media (max-width: 768px) {
-    padding: 14px 70px 12px;
-    color: #4cb3c4 !important;
-    border: 1px solid #4cb3c4;
+    margin-top: 20px;
+    padding: 16px 60px;
+    font-size: 16px;
   }
 `;
 
 const MobileMenuLogo = styled.div`
-  text-align: center;
-  font-size: 1.4rem;
-  font-weight: bold;
-  line-height: 1.3;
-  margin-bottom: 6px;
-  
-  span {
-    font-size: 0.8rem;
-    font-weight: 300;
+  display: none;
+  @media (max-width: 768px) {
     display: block;
-    letter-spacing: 1px;
-    color: #666;
+    margin-bottom: 60px;
   }
-  
-  a {
-    font-size: 2.2rem;
-    font-weight: bold;
-  }
+`;
+
+const MobileLogoImg = styled.img`
+  width: 140px;
 `;

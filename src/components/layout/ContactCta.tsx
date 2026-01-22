@@ -54,8 +54,8 @@ export default function ContactCta() {
           </TextMask>
           <DescMask>
             <Desc variants={itemVariants as unknown as Variants}>
-              일상에 특별함을 더하는 첫 걸음, <br />
-              궁금한 점이 있으시다면 언제든 편하게 문의해 주세요.
+            ご質問などありましたら、お電話かお問い合わせフォームより <br />
+            気軽にお問い合わせください。
             </Desc>
           </DescMask>
         </ContentBox>
@@ -69,7 +69,7 @@ export default function ContactCta() {
             href="/contact" 
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            <span>GET IN TOUCH</span>
+            <span>お問い合わせフォーム</span>
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -115,7 +115,7 @@ const BackgroundOverlay = styled.div`
 const Inner = styled(motion.div)`
   position: relative;
   z-index: 2;
-  max-width: 1300px;
+  max-width: 1400px;
   width: 90%;
   margin: 0 auto;
   display: flex;
@@ -162,7 +162,7 @@ const DescMask = styled.div`
 `;
 
 const Title = styled(motion.h2)`
-  font-size: 5rem;
+  font-size: 3rem;
   font-weight: 800;
   line-height: 1;
   color: #fff;
@@ -230,7 +230,7 @@ const HoverBg = styled.div`
   left: -100%;
   width: 100%; 
   height: 100%;
-  background: #1a1a1a;
+  background: #4BB3C4;
   z-index: 1;
   transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 

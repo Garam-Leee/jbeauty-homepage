@@ -23,17 +23,23 @@ const DEFAULT_ITEMS: HomeNewsItem[] = [
     id: "2026-01-07",
     date: "2026.01.07",
     label: "お知らせ",
-    title: "【重要】お客様の大切なお知らせと休業のご案内",
+    title: "【重要】お客様へのお詫びと商品回収のお知らせ",
     excerpt:
-      "誠に勝手ながら、社내 사정으로 인해 일부 업무를 휴업하게 되었습니다. 자세한 내용은 본문을 확인해 주시기 바랍니다. 이용에 불편을 드려 죄송합니다.",
+      "平素より弊社製品をご愛顧いただき、厚く御礼申し上げます。" +
+      "このたび、弊社が製造いたしました下記の商品におきまして、品質不良が判明いたしました。" +
+      "お客様に安心して商品をご利用いただくため、該当商品を自主回収(リコール)をさせていただきます。" +
+      "お客様には多大なご迷惑とご心配をおかけいたしますことを、心よりお詫び申し上げます。",
   },
   {
     id: "2025-05-15",
     date: "2025.05.15",
     label: "お知らせ",
-    title: "사이트를 리뉴얼했습니다.",
+    title: "サイトをリニューアルしました",
     excerpt:
-      "J-BEAUTY 공식 사이트를 리뉴얼했습니다. 보다 보기 쉽고, 보다 쾌적한 브랜드 경험을 제공하기 위해 노력하겠습니다.",
+      "平素よりご利用いただきありがとうございます。" +  
+      "このたび、J-Beauty公式サイトをリニューアルいたしました。" +
+      "今後とも内容の充実を図り、より良い情報をお届けしてまいります。" +
+      "引き続きご愛顧のほど、よろしくお願い申し上げます。",
   },
 ];
 
@@ -120,7 +126,7 @@ const Section = styled.section`
 `;
 
 const Inner = styled.div`
-  max-width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
 `;
 
@@ -291,6 +297,13 @@ const Excerpt = styled.p`
   margin-bottom: 24px;
   max-width: 720px;
   word-break: keep-all;
+  
+  /* 2줄로 제한 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const ReadMore = styled(Link)`
