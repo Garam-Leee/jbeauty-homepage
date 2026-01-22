@@ -9,11 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "framer-motion": "^12.28.1",
     "next": "16.1.4",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "swiper": "^12.0.3"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.13.5",
