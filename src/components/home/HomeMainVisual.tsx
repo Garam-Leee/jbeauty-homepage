@@ -80,14 +80,13 @@ const Section = styled.section`
   width: 100%;
   height: 800px;
   min-height: 800px;
-  position: relative;
-  padding: 12px; /* 배경 테두리 간격 */
+  position: relative; 
+ 
 `;
 
 const StyledSwiper = styled(Swiper)`
   width: 100%;
-  height: 100%;
-  border-radius: 15px;
+  height: 100%; 
   overflow: hidden;
 
   .swiper-wrapper,
@@ -110,12 +109,11 @@ const SlideBG = styled.div`
 const Overlay = styled.div`
   position: absolute;
   /* Swiper와 동일한 영역을 덮도록 설정 */
-  top: 12px;
-  left: 12px;
+  top: 60px;
+  left: 0px;
   right: 12px;
-  bottom: 12px;
-  z-index: 10;
-  border-radius: 15px;
+  bottom: 0px;
+  z-index: 10; 
   overflow: hidden; /* 그라디언트가 곡선을 넘지 않게 */
 
   display: flex;

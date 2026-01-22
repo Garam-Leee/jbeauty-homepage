@@ -66,8 +66,7 @@ export default function ContactCta() {
           transition={{ delay: 0.6, duration: 0.8 }}
         >
           <CtaLink 
-            href="/contact"
-            whileHover={{ y: -8 }}
+            href="/contact" 
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
             <span>GET IN TOUCH</span>
@@ -231,7 +230,7 @@ const HoverBg = styled.div`
   left: -100%;
   width: 100%; 
   height: 100%;
-  background: #4bb3c4;
+  background: #1a1a1a;
   z-index: 1;
   transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
